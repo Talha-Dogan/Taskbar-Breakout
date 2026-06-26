@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace TaskbarBreakout.Core
@@ -8,25 +9,41 @@ namespace TaskbarBreakout.Core
         [SerializeField] private Color frameColor = Color.white;
         [SerializeField] private float thickness = 0.06f;
 
+        private const float PPU = 100f;
         private Camera _cam;
+        private Rect _bounds;
 
         private void Awake() => _cam = Camera.main;
-        private void Start()  => RebuildFrame();
 
-        public void RebuildFrame()
+        public void SetBounds(Rect bounds)
+        {
+            _bounds = bounds;
+            StartCoroutine(BuildWhenReady());
+        }
+
+        // Kamera tam adapte olana kadar bekle, sonra gerçek frustum'a göre çiz
+        private IEnumerator BuildWhenReady()
+        {
+            float target = _bounds.height * 0.5f / PPU;
+            while (Mathf.Abs(_cam.orthographicSize - target) > 0.005f)
+                yield return null;
+            yield return null; // bir frame daha: aspect ratio güncellensin
+            RebuildFrame();
+        }
+
+        private void RebuildFrame()
         {
             foreach (Transform child in transform)
                 Destroy(child.gameObject);
 
             float hs = _cam.orthographicSize;
-            float w  = hs * 2f * _cam.aspect;
-            float h  = hs * 2f;
+            float hw = hs * _cam.aspect;
             float t  = thickness;
 
-            SpawnWall("TopWall",    new Vector2(0,            hs - t * 0.5f),     new Vector2(w, t));
-            SpawnWall("BottomWall", new Vector2(0,           -hs + t * 0.5f),     new Vector2(w, t));
-            SpawnWall("LeftWall",   new Vector2(-w * 0.5f + t * 0.5f, 0),         new Vector2(t, h));
-            SpawnWall("RightWall",  new Vector2( w * 0.5f - t * 0.5f, 0),         new Vector2(t, h));
+            SpawnWall("TopWall",    new Vector2(0,          hs - t * 0.5f), new Vector2(hw * 2f, t));
+            SpawnWall("BottomWall", new Vector2(0,         -hs + t * 0.5f), new Vector2(hw * 2f, t));
+            SpawnWall("LeftWall",   new Vector2(-hw + t * 0.5f, 0),         new Vector2(t, hs * 2f));
+            SpawnWall("RightWall",  new Vector2( hw - t * 0.5f, 0),         new Vector2(t, hs * 2f));
         }
 
         private void SpawnWall(string wallName, Vector2 localPos, Vector2 size)

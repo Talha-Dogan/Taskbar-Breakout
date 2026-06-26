@@ -21,10 +21,6 @@ namespace TaskbarBreakout.Core
 
         public void AdaptTo(Rect gameBounds)
         {
-#if UNITY_EDITOR
-            // Editor'da native pencere yok, default ortho bırak
-            return;
-#endif
             float orthoSize = gameBounds.height * 0.5f / PixelsPerUnit;
 
             if (_transition != null)

@@ -7,6 +7,7 @@ namespace TaskbarBreakout.Core
     {
         [SerializeField] private NativeWindowManager windowManager;
         [SerializeField] private CameraAdapter cameraAdapter;
+        [SerializeField] private GameFrame gameFrame;
 
         private IWindowMode _currentMode;
         private TaskbarMode _taskbarMode;
@@ -26,7 +27,7 @@ namespace TaskbarBreakout.Core
 
         private System.Collections.IEnumerator ActivateAfterFrame(IWindowMode mode)
         {
-            yield return null; // UniWinC'nin initialize olması için bir frame bekle
+            yield return null;
             Activate(mode);
         }
 
@@ -53,12 +54,9 @@ namespace TaskbarBreakout.Core
             _currentMode = mode;
             _currentMode.Activate(ctx);
             cameraAdapter.AdaptTo(mode.GameBounds);
+            gameFrame?.SetBounds(mode.GameBounds);
         }
 
-        private WindowTransitionContext BuildContext()
-        {
-            // GameStateMachine'den doldurulacak, şimdilik boş
-            return new WindowTransitionContext();
-        }
+        private WindowTransitionContext BuildContext() => new WindowTransitionContext();
     }
 }
