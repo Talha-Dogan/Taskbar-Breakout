@@ -28,7 +28,6 @@ namespace TaskbarBreakout.Core
         {
             IsDragging = true;
             _prevCursor = GetCursorScreenPos();
-            Debug.Log($"[WindowDragger] Drag started at {_prevCursor}");
         }
 
         public void EndDrag()

@@ -22,11 +22,10 @@ namespace TaskbarBreakout.Core
             _window.SetAlwaysOnTop(true);
             _window.EnableRaycastHitTest();
 
-            // DEBUG: sabit konum/boyut — çalışıyor mu görmek için
-            _window.SetSize(new Vector2Int(800, 200));
+            _window.SetSize(new Vector2Int(832, 200));
             _window.SetPosition(new Vector2Int(200, 400));
 
-            GameBounds = new Rect(0, 0, 800, 200);
+            GameBounds = new Rect(0, 0, 832, 200);
         }
 
         public void Deactivate()

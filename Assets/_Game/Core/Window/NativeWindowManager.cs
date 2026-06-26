@@ -9,21 +9,10 @@ namespace TaskbarBreakout.Core
     {
         [SerializeField] private UniWindowController uwc;
 
-        private readonly System.Text.StringBuilder _log = new();
-
-        private void Log(string msg)
-        {
-            _log.AppendLine($"[{Time.frameCount}] {msg}");
-            System.IO.File.WriteAllText(
-                System.IO.Path.Combine(Application.persistentDataPath, "uwc_debug.txt"),
-                _log.ToString());
-        }
-
         private void Awake()
         {
             if (uwc == null)
                 uwc = FindFirstObjectByType<UniWindowController>();
-            Log($"Awake: uwc={(uwc == null ? "NULL" : "FOUND")}, screen={Screen.width}x{Screen.height}");
         }
 
         public void SnapToTaskbar(TaskbarInfo info)
@@ -34,12 +23,9 @@ namespace TaskbarBreakout.Core
 
         public void SetPosition(Vector2Int position)
         {
-            Log($"SetPosition called: {position}, uwc={uwc != null}");
             if (uwc == null) return;
             int screenH = Screen.currentResolution.height;
-            Vector2 uwcPos = new Vector2(position.x, screenH - position.y - GetSize().y);
-            Log($"uwc.windowPosition = {uwcPos} (screenH={screenH})");
-            uwc.windowPosition = uwcPos;
+            uwc.windowPosition = new Vector2(position.x, screenH - position.y - GetSize().y);
         }
 
         public Vector2Int GetPosition()
@@ -52,10 +38,8 @@ namespace TaskbarBreakout.Core
 
         public void SetSize(Vector2Int size)
         {
-            Log($"SetSize called: {size}, uwc={uwc != null}");
             if (uwc == null) return;
             uwc.windowSize = new Vector2(size.x, size.y);
-            Log($"windowSize set to {size}");
         }
 
         public Vector2Int GetSize()
@@ -88,7 +72,7 @@ namespace TaskbarBreakout.Core
         public void EnableRaycastHitTest()
         {
 #if UNITY_EDITOR
-            return; // UniWinC raycast, Editor'da native pencere olmadan çalışmaz
+            return;
 #else
             if (uwc == null) return;
             uwc.isHitTestEnabled = true;
